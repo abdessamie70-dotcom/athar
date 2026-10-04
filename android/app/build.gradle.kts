@@ -23,7 +23,6 @@ android {
 
     buildTypes {
         release {
-            // Signing with the debug keys for now so release APK is properly signed and installable
             signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             isShrinkResources = false
