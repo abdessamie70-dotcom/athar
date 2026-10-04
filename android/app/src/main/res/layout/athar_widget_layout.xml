@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:padding="16dp">
+
+    <!-- Top Header: App Branding & Status -->
+    <LinearLayout
+        android:id="@+id/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/widget_app_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="أثر باقٍ • Athar"
+            android:textColor="#C5A059"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/widget_last_updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="اليوم"
+            android:textColor="#88A090"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <!-- Center Content: Lasting Minutes & Voice Button -->
+    <LinearLayout
+        android:id="@+id/center_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header_layout"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_minutes_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="دقائق الأثر المستثمرة اليوم"
+                android:textColor="#A2B7AA"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/widget_lasting_minutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 دقيقة"
+                android:textColor="#FFFFFF"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Fast 1-Tap Voice Action Shortcut Button -->
+        <FrameLayout
+            android:id="@+id/widget_mic_btn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/widget_mic_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/widget_mic_icon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:src="@android:drawable/ic_btn_speak_now"
+                android:tint="#FFFFFF"
+                android:contentDescription="تسجيل صوتي فوري" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- Bottom Daily Inspiring Deed Idea -->
+    <LinearLayout
+        android:id="@+id/quote_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:background="#16221B"
+        android:padding="8dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/widget_quote_prefix"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="فكرة اليوم: "
+            android:textColor="#C5A059"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/widget_quote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="سقيا ماء أو بذل صدقة خفية أثر يمتد ولا ينقطع."
+            android:textColor="#E0E8E2"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+</RelativeLayout>

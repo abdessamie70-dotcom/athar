@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>أثر باقٍ (Athar) - معاينة تفاعلية للتطبيق وودجت الشاشة الرئيسية مع الاستخلاص الصوتي الذكي</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Amiri:ital,wght@0,700;1,400&display=swap');
+    body {
+      font-family: 'Tajawal', sans-serif;
+    }
+    .quran-font {
+      font-family: 'Amiri', serif;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 0.2; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .mic-pulse {
+      animation: pulse-ring 1.8s infinite ease-in-out;
+    }
+    .glow-gold {
+      box-shadow: 0 0 25px rgba(197, 160, 89, 0.35);
+    }
+  </style>
+</head>
+<body class="bg-stone-950 text-stone-100 min-h-screen flex items-center justify-center p-3 sm:p-6">
+
+  <!-- Responsive Parent Layout: Phone Preview + Native Home Screen Widget Simulator -->
+  <div class="flex flex-col lg:flex-row items-center justify-center gap-8 w-full max-w-6xl py-2">
+
+    <!-- ================= 1. MOBILE PHONE FRAME ================= -->
+    <div id="phone-container" class="w-full max-w-md h-[860px] max-h-[96vh] bg-[#F9F7F2] text-[#212824] rounded-[36px] shadow-2xl overflow-hidden flex flex-col border-4 border-stone-800 transition-all duration-300 relative flex-shrink-0">
+      
+      <!-- Status Bar -->
+      <div class="h-8 px-6 flex justify-between items-center text-xs opacity-70 select-none pt-2 z-10">
+        <span id="live-time" class="font-bold">09:41</span>
+        <div class="flex items-center gap-1.5 text-xs">
+          <span>5G</span>
+          <span>●●●</span>
+          <span>100%</span>
+        </div>
+      </div>
+
+      <!-- App Top Bar -->
+      <header class="px-5 py-3 border-b border-stone-200/70 flex items-center justify-between transition-colors duration-300 header-bar">
+        <div>
+          <h1 class="text-xl font-extrabold text-[#28533D] app-title tracking-tight flex items-center gap-2">
+            <span>أثر باقٍ</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-[#28533D]/10 text-[#28533D] font-medium badge-athar">Athar</span>
+          </h1>
+          <p class="quran-font text-xs text-[#8F5D38] italic font-semibold app-subtitle">"وَالْآخِرَةُ خَيْرٌ وَأَبْقَىٰ"</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="triggerVoiceInput()" class="w-9 h-9 rounded-full bg-[#C49F58]/15 text-[#967332] flex items-center justify-center hover:bg-[#C49F58]/25 transition-colors" title="تسجيل صوتي ذكي">
+            🎙️
+          </button>
+          <button onclick="switchTab('settings')" class="w-9 h-9 rounded-full bg-stone-200/80 flex items-center justify-center text-stone-700 hover:bg-stone-300 transition-colors icon-button">
+            ⚙️
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Scrollable Screen Content -->
+      <main id="screen-container" class="flex-1 overflow-y-auto px-4 py-4 space-y-4 hide-scrollbar">
+
+        <!-- ================= TAB 1: DASHBOARD (اليوم) ================= -->
+        <section id="tab-dashboard" class="tab-content space-y-4">
+          
+          <!-- Progress Ring Card -->
+          <div class="card bg-white p-5 rounded-2xl border border-stone-200 shadow-sm flex items-center gap-4 transition-colors">
+            <div class="relative w-20 h-20 flex-shrink-0 flex items-center justify-center">
+              <svg class="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
+                <path class="text-stone-200" stroke-width="3.5" stroke="currentColor" fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path id="progress-circle" class="text-[#28533D] transition-all duration-700 ease-out" stroke-dasharray="100, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span id="progress-percent" class="text-base font-extrabold text-[#28533D]">100%</span>
+                <span class="text-[9px] text-stone-500 font-medium">الهدف</span>
+              </div>
+            </div>
+
+            <div class="flex-1">
+              <span id="target-badge" class="inline-block text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#C49F58]/20 text-[#A17F38] mb-1">
+                اكتمل هدف اليوم ★
+              </span>
+              <div class="flex items-baseline gap-1">
+                <span id="lasting-minutes-display" class="text-2xl font-black text-stone-900">45</span>
+                <span class="text-xs text-stone-500">/ <span id="target-minutes-display">30</span> دقيقة باقية</span>
+              </div>
+              <p id="target-subtext" class="text-xs text-stone-500 mt-1">ما زاد فهو رفعة وبركة في صحيفة عملك.</p>
+            </div>
+          </div>
+
+          <!-- Perspective Ratio Card -->
+          <div class="card bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-2.5 transition-colors">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-stone-800 card-title">ميزان الوقت اليوم:</span>
+              <span id="ratio-badge" class="font-black text-sm text-[#28533D]">75% أثر باقٍ</span>
+            </div>
+            
+            <!-- Stacked Bar Ratio -->
+            <div class="w-full h-3.5 bg-stone-100 rounded-full overflow-hidden flex">
+              <div id="ratio-lasting-bar" class="h-full bg-[#28533D] transition-all duration-500" style="width: 75%"></div>
+              <div id="ratio-transient-bar" class="h-full bg-stone-300 transition-all duration-500" style="width: 25%"></div>
+            </div>
+
+            <div class="flex justify-between items-center text-[11px] text-stone-500 pt-1">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#28533D] inline-block"></span>
+                <span id="lasting-time-label">45 دقيقة أثر باقٍ</span>
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-stone-300 inline-block"></span>
+                <span id="transient-time-label">15 دقيقة عابر</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Recent Action Logs Header -->
+          <div class="flex justify-between items-center pt-1">
+            <h3 class="text-sm font-bold text-stone-800 card-title">سجل الأثر اليومي</h3>
+            <span class="text-xs text-stone-500 font-medium">اليوم</span>
+          </div>
+
+          <!-- Actions List -->
+          <div id="recent-actions-list" class="space-y-2.5">
+            <!-- Dynamic Actions inserted here -->
+          </div>
+
+        </section>
+
+        <!-- ================= TAB 2: PERSPECTIVE (الميزان) ================= -->
+        <section id="tab-perspective" class="tab-content space-y-4 hidden">
+          <div class="card bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-3">
+            <h3 class="text-sm font-bold text-stone-800 card-title">ميزان الحياة الأبدي (الرؤية القرآنية)</h3>
+            <p class="text-xs text-stone-600 leading-relaxed">
+              يقيس هذا المؤشر نسبة وقتك المستثمر في العمل الباقي مقارنة بالاستهلاك العابر خلال الأسبوع الجاري:
+            </p>
+            <div class="p-4 bg-[#F2EDE4] rounded-xl flex items-center justify-between">
+              <div>
+                <span class="text-xs text-stone-600">متوسط النسبة الأسبوعية:</span>
+                <div class="text-2xl font-black text-[#28533D]">68.4%</div>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-[#8F5D38] font-bold">حالة الميزان:</span>
+                <div class="text-xs font-semibold text-stone-700">مستثمر حكيم للأثر ★</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-3">
+            <h4 class="text-xs font-bold text-stone-700">توزيع الأثر حسب الأبواب الثلاثة:</h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between">
+                <span>علم نافع</span>
+                <span class="font-bold text-[#2F667F]">55%</span>
+              </div>
+              <div class="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-[#2F667F] h-full" style="width: 55%"></div>
+              </div>
+
+              <div class="flex justify-between pt-1">
+                <span>صدقة جارية</span>
+                <span class="font-bold text-[#386641]">25%</span>
+              </div>
+              <div class="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-[#386641] h-full" style="width: 25%"></div>
+              </div>
+
+              <div class="flex justify-between pt-1">
+                <span>عمل صالح وبر</span>
+                <span class="font-bold text-[#8F5D38]">20%</span>
+              </div>
+              <div class="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-[#8F5D38] h-full" style="width: 20%"></div>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="openTransientModal()" class="w-full py-2.5 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded-xl text-xs font-bold transition-colors">
+            + قيد استهلاك عابر (تصفح / ترفيه)
+          </button>
+        </section>
+
+        <!-- ================= TAB 3: INITIATIVES (بذور الأثر) ================= -->
+        <section id="tab-initiatives" class="tab-content space-y-3 hidden">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-bold text-stone-800 card-title">بذور الأثر والمبادرات</h3>
+            <span class="text-xs text-[#28533D] font-semibold">مبادرات جاهزة للتبني</span>
+          </div>
+
+          <div class="grid grid-cols-1 gap-2.5" id="initiatives-list">
+            <!-- Rendered by JS -->
+          </div>
+        </section>
+
+        <!-- ================= TAB 4: CAPSULE (الخزنة المشفرة) ================= -->
+        <section id="tab-capsule" class="tab-content space-y-3 hidden">
+          <div class="card bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🔒</span>
+              <h3 class="text-sm font-bold text-stone-800 card-title">كبسولة الأثر والوصايا (AES-256)</h3>
+            </div>
+            <p class="text-xs text-stone-500 leading-relaxed">
+              مستودع آمن مشفر بالكامل على جهازك لا يمكن لأحد قراءته إلا بعبارة المرور الخاصة بك.
+            </p>
+
+            <div id="capsule-locked" class="p-4 bg-stone-50 rounded-xl border border-dashed border-stone-300 text-center space-y-3">
+              <p class="text-xs text-stone-600">الخزنة مقفلة حالياً. أدخل عبارة المرور لفك التشفير:</p>
+              <input type="password" id="passphrase-input" placeholder="كلمة المرور التجريبية: athar2026" class="w-full text-center px-3 py-2 text-xs rounded-xl border border-stone-300 input-field" />
+              <button onclick="unlockCapsule()" class="w-full py-2 bg-[#28533D] text-white rounded-xl text-xs font-bold">
+                فك تشفير الخزنة 🔓
+              </button>
+            </div>
+
+            <div id="capsule-unlocked" class="hidden space-y-3">
+              <div class="flex justify-between items-center bg-green-50 p-2.5 rounded-xl border border-green-200">
+                <span class="text-xs text-green-800 font-bold">✓ الخزنة مفتوحة ومؤمنة محلياً</span>
+                <button onclick="lockCapsule()" class="text-xs text-stone-500 hover:text-stone-800">قفل الآن 🔒</button>
+              </div>
+              <div id="capsules-list" class="space-y-2">
+                <!-- Capsules rendered by JS -->
+              </div>
+              <button onclick="openNewCapsuleModal()" class="w-full py-2 bg-[#C49F58] hover:bg-[#b08d48] text-white rounded-xl text-xs font-bold">
+                + إضافة وصية أو تأمل مشفر
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= TAB 5: SETTINGS (الإعدادات) ================= -->
+        <section id="tab-settings" class="tab-content space-y-3 hidden">
+          <div class="card bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+            <h3 class="text-sm font-bold text-stone-800 card-title">إعدادات التطبيق وتفضيلاتك</h3>
+            
+            <div class="space-y-2">
+              <label class="text-xs font-semibold text-stone-600 block">الهدف اليومي للاستثمار الباقي:</label>
+              <div class="flex items-center gap-3">
+                <input type="range" id="target-slider" min="10" max="120" step="5" value="30" oninput="updateTargetSetting(this.value)" class="flex-1 accent-[#28533D]" />
+                <span id="target-slider-val" class="text-xs font-bold text-[#28533D] min-w-[50px]">30 دقيقة</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-stone-100">
+              <span class="text-xs font-semibold text-stone-700">المظهر الليلي الداكن:</span>
+              <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode(this.checked)" class="w-4 h-4 accent-[#28533D]" />
+            </div>
+
+            <div class="p-3 bg-stone-50 rounded-xl text-[11px] text-stone-500 leading-relaxed border border-stone-200">
+              تطبيق أثر باقٍ مصمم ليعمل بدون اتصال بالإنترنت (Offline-First)، مع الحفاظ التام على خصوصيتك.
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- Bottom Floating Action Buttons: Dual Voice + Manual Log -->
+      <div class="absolute bottom-16 left-4 right-4 flex justify-between pointer-events-none z-20">
+        <!-- Voice-to-Action Floating Button -->
+        <button onclick="triggerVoiceInput()" class="pointer-events-auto bg-[#28533D] hover:bg-[#1E3F2E] text-white p-3 rounded-full shadow-xl flex items-center gap-2 text-xs font-bold active:scale-95 transition-all glow-gold border border-[#C49F58]/50">
+          <span class="text-base">🎙️</span>
+          <span>إدخال صوتي سريع</span>
+        </button>
+
+        <!-- Manual Log Button -->
+        <button onclick="openLogSheet()" class="pointer-events-auto bg-stone-800 hover:bg-stone-900 text-white p-3 rounded-full shadow-xl flex items-center justify-center text-lg active:scale-95 transition-transform" title="تدوين يدوي">
+          +
+        </button>
+      </div>
+
+      <!-- Bottom Navigation Bar -->
+      <nav class="h-16 border-t border-stone-200/80 bg-white px-2 flex justify-around items-center text-[10px] select-none z-10 transition-colors nav-bar">
+        <button onclick="switchTab('dashboard')" class="nav-item flex flex-col items-center gap-1 text-[#28533D] font-bold py-1 px-2" data-tab="dashboard">
+          <span class="text-base">☀️</span>
+          <span>اليوم</span>
+        </button>
+        <button onclick="switchTab('perspective')" class="nav-item flex flex-col items-center gap-1 text-stone-400 font-medium py-1 px-2" data-tab="perspective">
+          <span class="text-base">⚖️</span>
+          <span>الميزان</span>
+        </button>
+        <button onclick="switchTab('initiatives')" class="nav-item flex flex-col items-center gap-1 text-stone-400 font-medium py-1 px-2" data-tab="initiatives">
+          <span class="text-base">🌱</span>
+          <span>البذور</span>
+        </button>
+        <button onclick="switchTab('capsule')" class="nav-item flex flex-col items-center gap-1 text-stone-400 font-medium py-1 px-2" data-tab="capsule">
+          <span class="text-base">🗝️</span>
+          <span>الخزنة</span>
+        </button>
+        <button onclick="switchTab('settings')" class="nav-item flex flex-col items-center gap-1 text-stone-400 font-medium py-1 px-2" data-tab="settings">
+          <span class="text-base">⚙️</span>
+          <span>الإعدادات</span>
+        </button>
+      </nav>
+
+      <!-- ================= MODAL: SMART VOICE ACTION BOTTOM SHEET ================= -->
+      <div id="modal-voice-sheet" class="absolute inset-0 bg-black/60 z-40 flex flex-col justify-end transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-t-3xl p-5 space-y-4 max-h-[92%] overflow-y-auto transform translate-y-full transition-transform duration-300 modal-card">
+          <div class="w-10 h-1 bg-stone-300 rounded-full mx-auto"></div>
+          
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2 text-[#28533D] font-bold">
+              <span class="text-xl">🎙️</span>
+              <h3 class="text-base font-bold text-stone-900 card-title">الاستخلاص الذكي من الصوت (Smart Voice)</h3>
+            </div>
+            <button onclick="closeVoiceSheet()" class="text-stone-400 hover:text-stone-700 text-lg">✕</button>
+          </div>
+
+          <p class="text-xs text-stone-500 text-center">
+            تحدث بحرية باللغة العربية وسيتم استخلاص المدة والتصنيف تلقائياً
+          </p>
+
+          <!-- Pulsing Microphone Indicator -->
+          <div class="flex flex-col items-center justify-center py-2 relative">
+            <div class="w-20 h-20 rounded-full bg-[#28533D]/20 absolute mic-pulse"></div>
+            <button onclick="toggleVoiceRecording()" id="voice-record-btn" class="w-16 h-16 rounded-full bg-[#28533D] text-white flex items-center justify-center text-2xl shadow-lg relative z-10 active:scale-95 transition-transform">
+              🎙️
+            </button>
+            <span id="voice-status-text" class="text-xs text-[#28533D] font-bold mt-3">استمع لصوتك.. (اختر مثالاً سريعاً أدناه للتجربة)</span>
+          </div>
+
+          <!-- Quick Speech Presets -->
+          <div>
+            <label class="block text-[11px] font-semibold text-stone-500 mb-1.5">أمثلة منطوقة سريعة للاختبار الفوري:</label>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="simulateVoiceInput('شرح درس لزميلي نصف ساعة')" class="text-[11px] px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium transition-colors">
+                🗣️ "شرح درس لزميلي نصف ساعة"
+              </button>
+              <button onclick="simulateVoiceInput('كفالة يتيم وتبرع بالمال 20 دقيقة')" class="text-[11px] px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium transition-colors">
+                🗣️ "كفالة يتيم وتبرع بالمال 20 دقيقة"
+              </button>
+              <button onclick="simulateVoiceInput('مكالمة صلة رحم مع أختي ساعة ونصف')" class="text-[11px] px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium transition-colors">
+                🗣️ "مكالمة صلة رحم مع أختي ساعة ونصف"
+              </button>
+              <button onclick="simulateVoiceInput('سقيا ماء لعمال الحي ربع ساعة')" class="text-[11px] px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium transition-colors">
+                🗣️ "سقيا ماء لعمال الحي ربع ساعة"
+              </button>
+            </div>
+          </div>
+
+          <!-- Free-text Speech Simulation Input -->
+          <div class="flex gap-2">
+            <input type="text" id="custom-speech-input" placeholder="أو اكتب أي جملة صوتية للتجربة..." class="flex-1 px-3 py-1.5 text-xs rounded-xl border border-stone-300 input-field" />
+            <button onclick="simulateCustomSpeech()" class="px-3 py-1.5 bg-stone-800 text-white rounded-xl text-xs font-bold">تحليل ذكي</button>
+          </div>
+
+          <!-- Real-time Transcription Box -->
+          <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 text-xs">
+            <span class="text-stone-400 block text-[10px] mb-0.5">النص المنطوق:</span>
+            <p id="voice-transcription-text" class="font-bold text-stone-800 italic">"شرح درس لزميلي نصف ساعة"</p>
+          </div>
+
+          <!-- Smart Auto-Parsed Action Card Preview (Interactive Review) -->
+          <div id="voice-parsed-card" class="p-4 bg-amber-50/80 border border-[#C49F58]/50 rounded-2xl space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-[#A17F38] flex items-center gap-1">
+                <span>✨ بيانات الأثر المستخلصة تلقائياً</span>
+              </span>
+              <span class="text-[10px] bg-[#28533D]/10 text-[#28533D] px-2 py-0.5 rounded-full font-bold">تعرف آلي دقيق</span>
+            </div>
+
+            <!-- Editable Title -->
+            <div>
+              <label class="text-[10px] text-stone-500 font-bold block mb-1">العنوان المنقى:</label>
+              <input type="text" id="voice-parsed-title-input" class="w-full px-3 py-1.5 text-xs font-bold text-stone-900 rounded-lg border border-stone-300 bg-white" value="شرح درس لزميلي" />
+            </div>
+
+            <!-- Category Selector Chips -->
+            <div>
+              <label class="text-[10px] text-stone-500 font-bold block mb-1">التصنيف المستنتج (يمكنك التبديل):</label>
+              <div class="grid grid-cols-3 gap-1.5 text-center">
+                <button type="button" onclick="setParsedCategory('continuous_knowledge')" id="cat-chip-knowledge" class="py-1 px-2 rounded-lg text-[10px] font-bold border transition-colors bg-[#2F667F] text-white">علم نافع</button>
+                <button type="button" onclick="setParsedCategory('ongoing_charity')" id="cat-chip-charity" class="py-1 px-2 rounded-lg text-[10px] font-bold border transition-colors bg-stone-100 text-stone-600">صدقة جارية</button>
+                <button type="button" onclick="setParsedCategory('good_deed')" id="cat-chip-deed" class="py-1 px-2 rounded-lg text-[10px] font-bold border transition-colors bg-stone-100 text-stone-600">عمل صالح</button>
+              </div>
+            </div>
+
+            <!-- Duration Selector Chips -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-[10px] text-stone-500 font-bold">المدة المستخلصة:</label>
+                <span id="voice-duration-label" class="text-xs font-black text-[#28533D]">30 دقيقة</span>
+              </div>
+              <div class="flex flex-wrap gap-1">
+                <button onclick="setParsedDuration(15)" class="dur-chip px-2 py-0.5 rounded text-[10px] bg-stone-100 font-medium">15د</button>
+                <button onclick="setParsedDuration(20)" class="dur-chip px-2 py-0.5 rounded text-[10px] bg-stone-100 font-medium">20د</button>
+                <button onclick="setParsedDuration(30)" class="dur-chip px-2 py-0.5 rounded text-[10px] bg-[#28533D] text-white font-bold">30د</button>
+                <button onclick="setParsedDuration(45)" class="dur-chip px-2 py-0.5 rounded text-[10px] bg-stone-100 font-medium">45د</button>
+                <button onclick="setParsedDuration(60)" class="dur-chip px-2 py-0.5 rounded text-[10px] bg-stone-100 font-medium">60د</button>
+                <button onclick="setParsedDuration(90)" class="dur-chip px-2 py-0.5 rounded text-[10px] bg-stone-100 font-medium">90د</button>
+                <button onclick="setParsedDuration(120)" class="dur-chip px-2 py-0.5 rounded text-[10px] bg-stone-100 font-medium">120د</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1-Click Confirmation Button -->
+          <button onclick="confirmVoiceAction()" class="w-full py-3.5 bg-[#28533D] hover:bg-[#1E3F2E] text-white rounded-xl text-xs font-bold transition-all shadow-lg flex items-center justify-center gap-2 active:scale-98">
+            <span>✓ تأكيد الحفظ بلمسة واحدة</span>
+          </button>
+
+          <!-- Simulation Option for Permission Denied -->
+          <div class="text-center pt-1 border-t border-stone-100">
+            <button onclick="simulatePermissionDenied()" class="text-[10px] text-stone-400 hover:text-stone-600 underline">
+              [تجربة محاكاة: ماذا يحدث إذا رُفض إذن الميكروفون؟]
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= MODAL: PERMISSION DENIED DIALOG ================= -->
+      <div id="modal-permission-denied" class="absolute inset-0 bg-black/60 z-50 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-2xl p-5 space-y-4 max-w-sm w-full shadow-2xl modal-card">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-lg flex-shrink-0">
+              🎙️❌
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-stone-900 card-title">صلاحية الميكروفون مطلوبة</h4>
+              <span class="text-[10px] text-stone-500">تم حظر الإذن من إعدادات النظام</span>
+            </div>
+          </div>
+
+          <p class="text-xs text-stone-600 leading-relaxed">
+            يحتاج تطبيق "أثر باقٍ" لإذن الميكروفون لتمكينك من تدوين أعمالك الصالحة بصوتك وتحويلها إلى أثر مسجل في صحيفتك بسهولة وسرعة.
+          </p>
+
+          <div class="p-2.5 bg-stone-50 rounded-xl border border-stone-200 text-[11px] text-stone-600 flex items-center gap-2">
+            <span>ℹ️</span>
+            <span>يمكنك تفعيل الإذن الآن مباشرة من إعدادات الهاتف.</span>
+          </div>
+
+          <div class="flex gap-2 pt-2">
+            <button onclick="closePermissionDialog()" class="flex-1 py-2 text-xs font-medium text-stone-600 hover:bg-stone-100 rounded-xl">
+              لاحقاً
+            </button>
+            <button onclick="openPhoneSettingsSimulated()" class="flex-1 py-2 bg-[#28533D] hover:bg-[#1E3F2E] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1">
+              <span>⚙️ فتح إعدادات الهاتف</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= MODAL: QUICK ACTION LOG SHEET (MANUAL) ================= -->
+      <div id="modal-log-sheet" class="absolute inset-0 bg-black/50 z-30 flex flex-col justify-end transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-t-3xl p-5 space-y-4 max-h-[85%] overflow-y-auto transform translate-y-full transition-transform duration-300 modal-card">
+          <div class="w-10 h-1 bg-stone-300 rounded-full mx-auto"></div>
+          <div class="flex justify-between items-center">
+            <h3 class="text-base font-bold text-stone-900 card-title">تدوين أثر صالح جديد (يدوي)</h3>
+            <button onclick="closeLogSheet()" class="text-stone-400 hover:text-stone-700 text-lg">✕</button>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-stone-600 mb-1.5">نوع الأثر:</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="selectCategory('continuous_knowledge')" class="cat-btn py-2 text-xs rounded-xl border border-stone-200 font-bold bg-[#28533D] text-white" data-cat="continuous_knowledge">علم نافع</button>
+              <button onclick="selectCategory('ongoing_charity')" class="cat-btn py-2 text-xs rounded-xl border border-stone-200 font-medium text-stone-700 bg-stone-100" data-cat="ongoing_charity">صدقة جارية</button>
+              <button onclick="selectCategory('good_deed')" class="cat-btn py-2 text-xs rounded-xl border border-stone-200 font-medium text-stone-700 bg-stone-100" data-cat="good_deed">عمل صالح</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-stone-600 mb-1">ماذا بذلت لوجه الله؟</label>
+            <input type="text" id="action-title" placeholder="مثال: شرح مسألة، غرس نبتة، إطعام مسكين..." class="w-full px-3.5 py-2 text-xs rounded-xl border border-stone-300 focus:outline-none focus:border-[#28533D] input-field" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-stone-600 mb-1.5">المدة المستغرقة (دقائق):</label>
+            <div class="flex gap-2">
+              <button onclick="selectDuration(15)" class="dur-btn flex-1 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 bg-stone-100" data-dur="15">15 د</button>
+              <button onclick="selectDuration(30)" class="dur-btn flex-1 py-1.5 rounded-lg border border-stone-200 text-xs font-bold bg-[#28533D] text-white" data-dur="30">30 د</button>
+              <button onclick="selectDuration(45)" class="dur-btn flex-1 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 bg-stone-100" data-dur="45">45 د</button>
+              <button onclick="selectDuration(60)" class="dur-btn flex-1 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 bg-stone-100" data-dur="60">60 د</button>
+            </div>
+          </div>
+
+          <label class="flex items-center gap-2 text-xs text-stone-600 cursor-pointer pt-1">
+            <input type="checkbox" id="action-private" class="rounded accent-[#28533D]" />
+            <span>أثر خاص وسريرة بيني وبين الله فقط</span>
+          </label>
+
+          <button onclick="submitNewAction()" class="w-full py-3 bg-[#28533D] hover:bg-[#1E3F2E] text-white rounded-xl text-xs font-bold transition-colors shadow">
+            تسجيل في صحيفة الأثر ✨
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= MODAL: TRANSIENT TIME LOGGING ================= -->
+      <div id="modal-transient" class="absolute inset-0 bg-black/50 z-30 flex flex-col justify-end transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-t-3xl p-5 space-y-4 modal-card">
+          <div class="w-10 h-1 bg-stone-300 rounded-full mx-auto"></div>
+          <div class="flex justify-between items-center">
+            <h3 class="text-base font-bold text-stone-900 card-title">قيد استهلاك عابر (تصفح / ترفيه)</h3>
+            <button onclick="closeTransientModal()" class="text-stone-400 hover:text-stone-700 text-lg">✕</button>
+          </div>
+          <p class="text-xs text-stone-500 leading-relaxed">
+            قيد الوقت المستغرق في التصفح وشبكات التواصل يساعدك في معرفة ميزان استثمارك الأبدي.
+          </p>
+          <div class="flex gap-2">
+            <button onclick="document.getElementById('transient-input').value = 15" class="flex-1 py-1.5 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium">15 دقيقة</button>
+            <button onclick="document.getElementById('transient-input').value = 30" class="flex-1 py-1.5 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium">30 دقيقة</button>
+            <button onclick="document.getElementById('transient-input').value = 60" class="flex-1 py-1.5 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium">60 دقيقة</button>
+          </div>
+          <input type="number" id="transient-input" value="30" class="w-full text-center px-3 py-2 text-sm rounded-xl border border-stone-300 input-field" />
+          <button onclick="submitTransientTime()" class="w-full py-2.5 bg-[#60564D] hover:bg-[#4E443C] text-white rounded-xl text-xs font-bold">
+            تأكيد وإضافة لميزان اليوم
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= 2. NATIVE HOME SCREEN WIDGET SIMULATOR (ودجت الشاشة الرئيسية) ================= -->
+    <div class="w-full max-w-sm flex flex-col gap-4">
+      
+      <!-- Section Title & Description -->
+      <div class="text-right space-y-1">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-900/40 text-emerald-400 text-xs font-bold border border-emerald-700/50">
+          <span>📲 ودجت الشاشة الرئيسية (Home Widget)</span>
+        </div>
+        <h2 class="text-lg font-extrabold text-stone-100">محاكي الودجت على هاتف المستخدم</h2>
+        <p class="text-xs text-stone-400 leading-relaxed">
+          يعرض دقائق الأثر اليومي وتذكرة روحية متجددة، وزر ميكروفون سريع يفتح تسجيل الصوت فوراً عبر الرابط العميق (<code class="text-amber-400">athar://voice_action</code>).
+        </p>
+      </div>
+
+      <!-- Simulated Native Android / iOS Widget Card -->
+      <div id="native-widget-card" class="bg-gradient-to-br from-[#1E2822] to-[#141C17] border border-[#35493D] rounded-[28px] p-5 shadow-2xl relative overflow-hidden transition-all duration-300 hover:border-[#C5A059]/60">
+        
+        <!-- Subtle Glow Effect -->
+        <div class="absolute -top-12 -left-12 w-28 h-28 bg-[#C5A059]/10 rounded-full blur-xl pointer-events-none"></div>
+
+        <!-- Widget Header -->
+        <div class="flex justify-between items-center mb-3">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs text-[#C5A059] font-extrabold tracking-wide">أثر باقٍ • Athar</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          </div>
+          <span id="widget-last-updated-val" class="text-[10px] text-[#88A090] font-medium">اليوم 09:41</span>
+        </div>
+
+        <!-- Widget Body: Minutes Counter + 1-Tap Voice Button -->
+        <div class="flex justify-between items-center py-2">
+          <div>
+            <span class="text-[11px] text-[#A2B7AA] block font-medium">دقائق الأثر المستثمرة اليوم</span>
+            <div class="flex items-baseline gap-1 mt-0.5">
+              <span id="widget-lasting-minutes-val" class="text-3xl font-black text-white tracking-tight">45</span>
+              <span class="text-xs text-[#C5A059] font-bold">دقيقة</span>
+            </div>
+          </div>
+
+          <!-- Fast 1-Tap Mic Shortcut Button -->
+          <div class="relative flex flex-col items-center">
+            <div class="w-14 h-14 rounded-full bg-[#C5A059]/20 absolute mic-pulse pointer-events-none"></div>
+            <button onclick="triggerVoiceFromWidget()" class="w-12 h-12 rounded-full bg-[#2D5A46] border-2 border-[#C5A059] flex items-center justify-center text-white text-xl shadow-lg relative z-10 active:scale-95 hover:bg-[#34664F] transition-all" title="اضغط للتسجيل الصوتي الفوري عبر Deep Link">
+              🎙️
+            </button>
+            <span class="text-[9px] text-[#C5A059] font-bold mt-1 tracking-tight">تسجيل صوتي</span>
+          </div>
+        </div>
+
+        <!-- Widget Footer: Daily Rotating Deed Idea -->
+        <div class="mt-3.5 pt-3 border-t border-[#2A3B30] bg-[#16221B]/90 -mx-5 -mb-5 px-5 py-3 rounded-b-[28px] flex items-start gap-2">
+          <span class="text-xs">🌱</span>
+          <div class="flex-1">
+            <span class="text-[10px] text-[#C5A059] font-bold block">فكرة أثر اليوم:</span>
+            <p id="widget-daily-quote" class="text-[11px] text-[#E0E8E2] leading-snug font-medium">
+              "سقيا ماء أو بذل صدقة خفية أثر يمتد ولا ينقطع."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Checklist & Technical Details -->
+      <div class="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 space-y-2.5 text-xs">
+        <div class="font-bold text-stone-200 flex items-center gap-1.5">
+          <span>⚡</span>
+          <span>تكامل النظام والربط العميق (Deep Link):</span>
+        </div>
+        <ul class="space-y-1.5 text-stone-400 text-[11px]">
+          <li class="flex items-center gap-1.5">
+            <span class="text-emerald-400">✓</span>
+            <span><strong>حزمة home_widget:</strong> تحديث برمجي آلي عند كل تسجيل أثر جديد.</span>
+          </li>
+          <li class="flex items-center gap-1.5">
+            <span class="text-emerald-400">✓</span>
+            <span><strong>رابط عميق (Deep Link):</strong> <code class="text-amber-400 bg-stone-950 px-1 py-0.5 rounded">athar://voice_action</code> يفتح نافذة التسجيل مباشرة.</span>
+          </li>
+          <li class="flex items-center gap-1.5">
+            <span class="text-emerald-400">✓</span>
+            <span><strong>استخلاص ذكي (NLP Parser):</strong> استخراج المدة وتصنيف العمل وتطهير العنوان.</span>
+          </li>
+        </ul>
+
+        <button onclick="testRandomDeedQuote()" class="w-full mt-2 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded-lg text-[10px] font-medium transition-colors">
+          🔄 تدوير فكرة اليوم الملهمة في الودجت
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // Initial App State conforming strictly to SPEC.md
+    const appState = {
+      user: {
+        name: "عبدالله الساعي",
+        dailyTargetMinutes: 30,
+        darkMode: false,
+      },
+      metrics: {
+        lastingTimeMinutes: 45,
+        transientTimeMinutes: 15,
+      },
+      actions: [
+        {
+          id: "act_1",
+          title: "توثيق ونشر حل تقني مفتوح المصدر",
+          category: "continuous_knowledge",
+          categoryLabel: "علم نافع",
+          categoryColor: "bg-[#2F667F]",
+          durationMinutes: 30,
+          time: "02:15 م",
+          isPrivate: false
+        },
+        {
+          id: "act_2",
+          title: "سقيا ماء لعمال الحي",
+          category: "ongoing_charity",
+          categoryLabel: "صدقة جارية",
+          categoryColor: "bg-[#386641]",
+          durationMinutes: 15,
+          time: "11:30 ص",
+          isPrivate: true
+        }
+      ],
+      initiatives: [
+        {
+          id: "init_1",
+          title: "وقف مصحف في مسجد الحي",
+          category: "علم نافع وتلاوة",
+          cost: "منخفضة (10-30 ر.س)",
+          impact: "أجر مستمر مع كل حرف يتلى إلى يوم القيامة",
+          durationMinutes: 20
+        },
+        {
+          id: "init_2",
+          title: "سقيا ماء وطعام طير في الشرفة",
+          category: "صدقة جارية ورحمة",
+          cost: "يسيرة جداً",
+          impact: "في كل كبد رطبة أجر باقٍ",
+          durationMinutes: 15
+        },
+        {
+          id: "init_3",
+          title: "شرح مسألة برمجية لزميل متعثر",
+          category: "علم نافع",
+          cost: "بلا تكلفة مادية",
+          impact: "زكاة العلم نشره وتفريج كربة عن مسلم",
+          durationMinutes: 30
+        }
+      ],
+      capsules: [
+        {
+          id: "cap_1",
+          type: "advice",
+          typeLabel: "نصيحة وخبرة",
+          title: "سر البركة في ساعات الصباح الأولى",
+          plainText: "اللهم بارك لأمتي في بكورها؛ ساعة بعد الفجر في مدارسة القرآن والعمل تعادل أضعاف ساعات النهار.",
+          date: "2026/10/01"
+        }
+      ],
+      isCapsuleUnlocked: false,
+      selectedCategory: 'continuous_knowledge',
+      selectedDuration: 30,
+      
+      // Voice & Smart Parser State
+      isVoiceRecording: false,
+      currentParsedVoice: {
+        rawText: "شرح درس لزميلي نصف ساعة",
+        title: "شرح درس لزميلي",
+        category: "continuous_knowledge",
+        catLabel: "علم نافع",
+        duration: 30
+      },
+
+      // Rotating Quotes Pool
+      dailyQuotes: [
+        "سقيا ماء أو بذل صدقة خفية أثر يمتد ولا ينقطع.",
+        "شرح مسألة علمية أو إعانة طالب علم غرسٌ باقٍ.",
+        "صلة رحم بمكالمة دافئة تنمي العمر وتبارك في الأثر.",
+        "إماطة أذى عن طريق أو كلمة طيبة تزرع أملاً.",
+        "تلاوة آيات وتدبرها وبث علم نافع صدقة جارية.",
+        "إطعام طعام أو إدخال سرور على قلب مسلم ثواب يدوم."
+      ],
+      currentQuoteIndex: 0
+    };
+
+    // Render Function
+    function render() {
+      // Progress calculation
+      const lasting = appState.metrics.lastingTimeMinutes;
+      const target = appState.user.dailyTargetMinutes;
+      const pct = Math.min(100, Math.round((lasting / target) * 100));
+      
+      document.getElementById('lasting-minutes-display').innerText = lasting;
+      document.getElementById('target-minutes-display').innerText = target;
+      document.getElementById('progress-percent').innerText = `${pct}%`;
+      
+      // SVG stroke-dasharray
+      const circle = document.getElementById('progress-circle');
+      circle.setAttribute('stroke-dasharray', `${pct}, 100`);
+
+      const targetBadge = document.getElementById('target-badge');
+      const targetSubtext = document.getElementById('target-subtext');
+      if (pct >= 100) {
+        targetBadge.innerText = 'اكتمل هدف اليوم ★';
+        targetBadge.className = 'inline-block text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#C49F58]/20 text-[#A17F38] mb-1';
+        targetSubtext.innerText = 'ما زاد فهو رفعة وبركة في صحيفة عملك.';
+      } else {
+        targetBadge.innerText = `متبقي ${target - lasting} دقيقة`;
+        targetBadge.className = 'inline-block text-[11px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 mb-1';
+        targetSubtext.innerText = 'استمر في استثمار دقائق عمرك فيما يبقى.';
+      }
+
+      // Ratio Calculation: Lasting / (Lasting + Transient) * 100
+      const transient = appState.metrics.transientTimeMinutes;
+      const total = lasting + transient;
+      const ratio = total > 0 ? Math.round((lasting / total) * 100) : 100;
+
+      document.getElementById('ratio-badge').innerText = `${ratio}% أثر باقٍ`;
+      document.getElementById('ratio-lasting-bar').style.width = `${ratio}%`;
+      document.getElementById('ratio-transient-bar').style.width = `${100 - ratio}%`;
+      document.getElementById('lasting-time-label').innerText = `${lasting} دقيقة أثر باقٍ`;
+      document.getElementById('transient-time-label').innerText = `${transient} دقيقة عابر`;
+
+      // Render Recent Actions
+      const actionsContainer = document.getElementById('recent-actions-list');
+      actionsContainer.innerHTML = '';
+      if (appState.actions.length === 0) {
+        actionsContainer.innerHTML = '<p class="text-xs text-stone-400 text-center py-6">لم تدون أعمالاً اليوم بعد. ابدأ الآن!</p>';
+      } else {
+        appState.actions.forEach(action => {
+          const div = document.createElement('div');
+          div.className = 'card bg-white p-3.5 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between transition-colors';
+          div.innerHTML = `
+            <div class="flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full ${action.categoryColor}"></span>
+              <div>
+                <h4 class="text-xs font-bold text-stone-900 card-title flex items-center gap-1.5">
+                  <span>${action.title}</span>
+                  ${action.isPrivate ? '<span class="text-[10px] text-stone-400" title="سريرة خفية">🔒</span>' : ''}
+                </h4>
+                <div class="flex items-center gap-2 text-[10px] text-stone-400 mt-0.5">
+                  <span>${action.categoryLabel}</span>
+                  <span>•</span>
+                  <span>${action.time}</span>
+                </div>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-[#28533D] bg-[#28533D]/10 px-2 py-1 rounded-lg">
+              +${action.durationMinutes} د
+            </span>
+          `;
+          actionsContainer.appendChild(div);
+        });
+      }
+
+      // Update Native Home Screen Widget UI simultaneously!
+      updateWidgetUI();
+
+      renderInitiatives();
+    }
+
+    // Home Screen Widget UI Synchronization
+    function updateWidgetUI() {
+      const lasting = appState.metrics.lastingTimeMinutes;
+      const widgetMinutesEl = document.getElementById('widget-lasting-minutes-val');
+      if (widgetMinutesEl) {
+        widgetMinutesEl.innerText = lasting;
+      }
+      const widgetQuoteEl = document.getElementById('widget-daily-quote');
+      if (widgetQuoteEl) {
+        widgetQuoteEl.innerText = `"${appState.dailyQuotes[appState.currentQuoteIndex]}"`;
+      }
+    }
+
+    function testRandomDeedQuote() {
+      appState.currentQuoteIndex = (appState.currentQuoteIndex + 1) % appState.dailyQuotes.length;
+      updateWidgetUI();
+    }
+
+    function triggerVoiceFromWidget() {
+      // Highlight phone container momentarily
+      const phone = document.getElementById('phone-container');
+      phone.classList.add('ring-4', 'ring-[#C5A059]');
+      setTimeout(() => phone.classList.remove('ring-4', 'ring-[#C5A059]'), 800);
+
+      // Trigger Voice Action Sheet directly via Deep Link simulation
+      triggerVoiceInput();
+    }
+
+    function renderInitiatives() {
+      const container = document.getElementById('initiatives-list');
+      container.innerHTML = '';
+      appState.initiatives.forEach(init => {
+        const div = document.createElement('div');
+        div.className = 'card bg-white p-3.5 rounded-xl border border-stone-200 shadow-sm space-y-2';
+        div.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <h4 class="text-xs font-bold text-stone-900 card-title">${init.title}</h4>
+              <span class="text-[10px] text-[#28533D] font-semibold">${init.category}</span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 bg-stone-100 text-stone-600 rounded-md font-medium">${init.cost}</span>
+          </div>
+          <p class="text-[11px] text-stone-500 leading-snug">${init.impact}</p>
+          <div class="flex justify-between items-center pt-1 border-t border-stone-100">
+            <span class="text-[10px] text-stone-400">المدة المقترحة: ${init.durationMinutes} دقيقة</span>
+            <button onclick="adoptInitiative('${init.title}', ${init.durationMinutes})" class="px-3 py-1 bg-[#28533D] hover:bg-[#1E3F2E] text-white rounded-lg text-[10px] font-bold">
+              تبني الآن ⚡
+            </button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function adoptInitiative(title, duration) {
+      appState.actions.unshift({
+        id: 'act_' + Date.now(),
+        title: title,
+        category: 'good_deed',
+        categoryLabel: 'عمل صالح',
+        categoryColor: 'bg-[#8F5D38]',
+        durationMinutes: duration,
+        time: 'الآن',
+        isPrivate: false
+      });
+      appState.metrics.lastingTimeMinutes += duration;
+      render();
+      switchTab('dashboard');
+      alert(`تقبل الله! تم تبني مبادرة "${title}" وإضافتها لصحيفتك.`);
+    }
+
+    function renderCapsules() {
+      const list = document.getElementById('capsules-list');
+      list.innerHTML = '';
+      appState.capsules.forEach(cap => {
+        const div = document.createElement('div');
+        div.className = 'p-3 bg-stone-50 rounded-xl border border-stone-200 space-y-1 text-xs';
+        div.innerHTML = `
+          <div class="flex justify-between items-center text-[10px] text-stone-400">
+            <span class="font-bold text-[#C49F58]">${cap.typeLabel}</span>
+            <span>${cap.date}</span>
+          </div>
+          <h5 class="font-bold text-stone-900">${cap.title}</h5>
+          <p class="text-stone-600 text-[11px] leading-relaxed">${cap.plainText}</p>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    // Tabs navigation
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        if (btn.dataset.tab === tabName) {
+          btn.classList.add('text-[#28533D]', 'font-bold');
+          btn.classList.remove('text-stone-400', 'font-medium');
+        } else {
+          btn.classList.remove('text-[#28533D]', 'font-bold');
+          btn.classList.add('text-stone-400', 'font-medium');
+        }
+      });
+    }
+
+    // ================= SMART VOICE PARSER ENGINE (NATURAL LANGUAGE PROCESSING) =================
+    function parseArabicVoice(rawText) {
+      const text = rawText.trim();
+      const lower = text.toLowerCase();
+
+      // 1. Duration Extraction
+      let duration = 30;
+      let durationDetected = false;
+
+      if (lower.includes('ساعة ونصف') || lower.includes('ساعة ونص')) {
+        duration = 90;
+        durationDetected = true;
+      } else if (lower.includes('ساعتين') || lower.includes('ساعتان')) {
+        duration = 120;
+        durationDetected = true;
+      } else if (lower.includes('نصف ساعة') || lower.includes('نص ساعة')) {
+        duration = 30;
+        durationDetected = true;
+      } else if (lower.includes('ثلث ساعة') || lower.includes('تلت ساعة')) {
+        duration = 20;
+        durationDetected = true;
+      } else if (lower.includes('ربع ساعة')) {
+        duration = 15;
+        durationDetected = true;
+      } else if (lower.includes('ساعة')) {
+        duration = 60;
+        durationDetected = true;
+      } else {
+        const regexMatch = lower.match(/(\d+)\s*(?:دقيقة|دقائق|د\b)/);
+        if (regexMatch) {
+          const num = parseInt(regexMatch[1]);
+          if (num > 0) {
+            duration = num;
+            durationDetected = true;
+          }
+        }
+      }
+
+      // 2. Category Auto-Detection
+      const knowledgeKws = ['علم', 'شرح', 'كود', 'قراءة', 'كتاب', 'درس', 'مدارسة', 'بحث', 'محاضرة', 'تلخيص', 'برمجة', 'تعليم', 'تلاوة', 'حفظ'];
+      const charityKws = ['صدقة', 'مال', 'تبرع', 'وقف', 'ماء', 'كفالة', 'بئر', 'سقاية', 'سقيا', 'إطعام', 'طعام', 'كسوة', 'غرس', 'شجرة', 'شتلة', 'أيتام'];
+      const deedKws = ['صلة رحم', 'صلة', 'رحم', 'مكالمة', 'زيارة', 'عيادة', 'مساعدة', 'إحسان', 'احسان', 'بر', 'والدين', 'والدة', 'والد', 'إماطة', 'أذى', 'خدمة', 'مريض'];
+
+      let kScore = 0, cScore = 0, dScore = 0;
+      knowledgeKws.forEach(k => { if (lower.includes(k)) kScore++; });
+      charityKws.forEach(c => { if (lower.includes(c)) cScore++; });
+      deedKws.forEach(d => { if (lower.includes(d)) dScore++; });
+
+      let category = 'good_deed';
+      let catLabel = 'عمل صالح';
+
+      if (kScore > cScore && kScore > dScore) {
+        category = 'continuous_knowledge';
+        catLabel = 'علم نافع';
+      } else if (cScore > kScore && cScore > dScore) {
+        category = 'ongoing_charity';
+        catLabel = 'صدقة جارية';
+      } else if (dScore > 0) {
+        category = 'good_deed';
+        catLabel = 'عمل صالح';
+      } else if (kScore > 0) {
+        category = 'continuous_knowledge';
+        catLabel = 'علم نافع';
+      } else if (cScore > 0) {
+        category = 'ongoing_charity';
+        catLabel = 'صدقة جارية';
+      }
+
+      // 3. Title Sanitization
+      let title = text;
+      const removals = [
+        'لمدة ساعة ونصف', 'ساعة ونصف', 'ساعة ونص',
+        'لمدة ساعتين', 'ساعتين', 'ساعتان',
+        'لمدة نصف ساعة', 'نصف ساعة', 'نص ساعة',
+        'لمدة ثلث ساعة', 'ثلث ساعة', 'تلت ساعة',
+        'لمدة ربع ساعة', 'ربع ساعة',
+        'لمدة ساعة', 'ساعة كاملة', 'ساعة',
+        'قمت بـ', 'قمت ب', 'عملت', 'سويت'
+      ];
+      removals.forEach(r => {
+        title = title.split(r).join('');
+      });
+      title = title.replace(/\b\d+\s*(?:دقيقة|دقائق|د\b)/g, '');
+      title = title.replace(/\s{2,}/g, ' ').trim();
+      if (!title) title = text;
+
+      return {
+        rawText: text,
+        title: title,
+        duration: duration,
+        category: category,
+        catLabel: catLabel
+      };
+    }
+
+    // Voice Sheet Operations
+    function triggerVoiceInput() {
+      const modal = document.getElementById('modal-voice-sheet');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.remove('translate-y-full');
+
+      // Start with default sample
+      simulateVoiceInput(appState.currentParsedVoice.rawText);
+    }
+
+    function closeVoiceSheet() {
+      const modal = document.getElementById('modal-voice-sheet');
+      modal.firstElementChild.classList.add('translate-y-full');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function toggleVoiceRecording() {
+      appState.isVoiceRecording = !appState.isVoiceRecording;
+      const btn = document.getElementById('voice-record-btn');
+      const statusText = document.getElementById('voice-status-text');
+
+      if (appState.isVoiceRecording) {
+        btn.classList.add('bg-red-600');
+        btn.classList.remove('bg-[#28533D]');
+        statusText.innerText = '🔴 جاري الاستماع لصوتك الكريم.. تحدث الآن';
+        statusText.className = 'text-xs text-red-600 font-bold mt-3 animate-pulse';
+      } else {
+        btn.classList.remove('bg-red-600');
+        btn.classList.add('bg-[#28533D]');
+        statusText.innerText = 'تم الاستماع والتحليل الذكي بنجاح!';
+        statusText.className = 'text-xs text-[#28533D] font-bold mt-3';
+      }
+    }
+
+    function simulateVoiceInput(text) {
+      document.getElementById('voice-transcription-text').innerText = `"${text}"`;
+      const parsed = parseArabicVoice(text);
+      appState.currentParsedVoice = parsed;
+
+      // Update interactive review fields
+      document.getElementById('voice-parsed-title-input').value = parsed.title;
+      setParsedCategory(parsed.category);
+      setParsedDuration(parsed.duration);
+
+      document.getElementById('voice-status-text').innerText = '✓ تم الاستخلاص الذكي التلقائي بنجاح!';
+    }
+
+    function simulateCustomSpeech() {
+      const input = document.getElementById('custom-speech-input');
+      const text = input.value.trim();
+      if (!text) {
+        alert('اكتب عبارة صوتية لتجربة استخلاصها');
+        return;
+      }
+      simulateVoiceInput(text);
+      input.value = '';
+    }
+
+    function setParsedCategory(cat) {
+      appState.currentParsedVoice.category = cat;
+      const catLabels = {
+        continuous_knowledge: 'علم نافع',
+        ongoing_charity: 'صدقة جارية',
+        good_deed: 'عمل صالح'
+      };
+      appState.currentParsedVoice.catLabel = catLabels[cat];
+
+      const kChip = document.getElementById('cat-chip-knowledge');
+      const cChip = document.getElementById('cat-chip-charity');
+      const dChip = document.getElementById('cat-chip-deed');
+
+      kChip.className = 'py-1 px-2 rounded-lg text-[10px] font-bold border transition-colors ' +
+        (cat === 'continuous_knowledge' ? 'bg-[#2F667F] text-white' : 'bg-stone-100 text-stone-600');
+      cChip.className = 'py-1 px-2 rounded-lg text-[10px] font-bold border transition-colors ' +
+        (cat === 'ongoing_charity' ? 'bg-[#386641] text-white' : 'bg-stone-100 text-stone-600');
+      dChip.className = 'py-1 px-2 rounded-lg text-[10px] font-bold border transition-colors ' +
+        (cat === 'good_deed' ? 'bg-[#8F5D38] text-white' : 'bg-stone-100 text-stone-600');
+    }
+
+    function setParsedDuration(dur) {
+      appState.currentParsedVoice.duration = dur;
+      document.getElementById('voice-duration-label').innerText = `${dur} دقيقة`;
+
+      document.querySelectorAll('.dur-chip').forEach(btn => {
+        const val = parseInt(btn.innerText);
+        if (val === dur) {
+          btn.className = 'dur-chip px-2 py-0.5 rounded text-[10px] bg-[#28533D] text-white font-bold';
+        } else {
+          btn.className = 'dur-chip px-2 py-0.5 rounded text-[10px] bg-stone-100 font-medium text-stone-700';
+        }
+      });
+    }
+
+    function confirmVoiceAction() {
+      const title = document.getElementById('voice-parsed-title-input').value.trim();
+      if (!title) {
+        alert('يرجى تحديد عنوان للأثر');
+        return;
+      }
+
+      const parsed = appState.currentParsedVoice;
+      const catColors = {
+        continuous_knowledge: 'bg-[#2F667F]',
+        ongoing_charity: 'bg-[#386641]',
+        good_deed: 'bg-[#8F5D38]'
+      };
+
+      appState.actions.unshift({
+        id: 'act_' + Date.now(),
+        title: title,
+        category: parsed.category,
+        categoryLabel: parsed.catLabel,
+        categoryColor: catColors[parsed.category],
+        durationMinutes: parsed.duration,
+        time: 'صوتي الآن',
+        isPrivate: false
+      });
+
+      // Atomic increment in metrics
+      appState.metrics.lastingTimeMinutes += parsed.duration;
+
+      closeVoiceSheet();
+      render();
+
+      // Notification
+      alert(`تقبل الله عملك: "${title}" (${parsed.duration} دقيقة) في صحيفة الأثر ✨\nتم تحديث ودجت الشاشة الرئيسية وميزان اليوم فوراً!`);
+    }
+
+    // Permission Dialog Simulation
+    function simulatePermissionDenied() {
+      closeVoiceSheet();
+      const modal = document.getElementById('modal-permission-denied');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closePermissionDialog() {
+      const modal = document.getElementById('modal-permission-denied');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function openPhoneSettingsSimulated() {
+      closePermissionDialog();
+      alert('تم استدعاء AppSettings.openAppSettings() وفتح إعدادات التطبيق في نظام الهاتف مباشرة لتفعيل إذن الميكروفون.');
+    }
+
+    // Manual Log Sheet
+    function openLogSheet() {
+      const modal = document.getElementById('modal-log-sheet');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.remove('translate-y-full');
+    }
+
+    function closeLogSheet() {
+      const modal = document.getElementById('modal-log-sheet');
+      modal.firstElementChild.classList.add('translate-y-full');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function openTransientModal() {
+      const modal = document.getElementById('modal-transient');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.remove('translate-y-full');
+    }
+
+    function closeTransientModal() {
+      const modal = document.getElementById('modal-transient');
+      modal.firstElementChild.classList.add('translate-y-full');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function selectCategory(cat) {
+      appState.selectedCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = 'cat-btn py-2 text-xs rounded-xl border border-stone-200 font-bold bg-[#28533D] text-white';
+        } else {
+          btn.className = 'cat-btn py-2 text-xs rounded-xl border border-stone-200 font-medium text-stone-700 bg-stone-100';
+        }
+      });
+    }
+
+    function selectDuration(dur) {
+      appState.selectedDuration = dur;
+      document.querySelectorAll('.dur-btn').forEach(btn => {
+        if (parseInt(btn.dataset.dur) === dur) {
+          btn.className = 'dur-btn flex-1 py-1.5 rounded-lg border border-stone-200 text-xs font-bold bg-[#28533D] text-white';
+        } else {
+          btn.className = 'dur-btn flex-1 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 bg-stone-100';
+        }
+      });
+    }
+
+    function submitNewAction() {
+      const title = document.getElementById('action-title').value.trim();
+      if (!title) {
+        alert('يرجى كتابة عنوان العمل الصالح');
+        return;
+      }
+      const isPrivate = document.getElementById('action-private').checked;
+      const duration = appState.selectedDuration;
+
+      const catLabels = {
+        continuous_knowledge: 'علم نافع',
+        ongoing_charity: 'صدقة جارية',
+        good_deed: 'عمل صالح'
+      };
+      const catColors = {
+        continuous_knowledge: 'bg-[#2F667F]',
+        ongoing_charity: 'bg-[#386641]',
+        good_deed: 'bg-[#8F5D38]'
+      };
+
+      appState.actions.unshift({
+        id: 'act_' + Date.now(),
+        title: title,
+        category: appState.selectedCategory,
+        categoryLabel: catLabels[appState.selectedCategory],
+        categoryColor: catColors[appState.selectedCategory],
+        durationMinutes: duration,
+        time: 'الآن',
+        isPrivate: isPrivate
+      });
+
+      appState.metrics.lastingTimeMinutes += duration;
+      document.getElementById('action-title').value = '';
+      closeLogSheet();
+      render();
+    }
+
+    function submitTransientTime() {
+      const mins = parseInt(document.getElementById('transient-input').value) || 0;
+      if (mins > 0) {
+        appState.metrics.transientTimeMinutes += mins;
+        closeTransientModal();
+        render();
+      }
+    }
+
+    function unlockCapsule() {
+      const pass = document.getElementById('passphrase-input').value.trim();
+      if (pass === 'athar2026' || pass.length >= 4) {
+        appState.isCapsuleUnlocked = true;
+        document.getElementById('capsule-locked').classList.add('hidden');
+        document.getElementById('capsule-unlocked').classList.remove('hidden');
+        renderCapsules();
+      } else {
+        alert('عبارة المرور غير صحيحة! جرب: athar2026');
+      }
+    }
+
+    function lockCapsule() {
+      appState.isCapsuleUnlocked = false;
+      document.getElementById('capsule-locked').classList.remove('hidden');
+      document.getElementById('capsule-unlocked').classList.add('hidden');
+      document.getElementById('passphrase-input').value = '';
+    }
+
+    function openNewCapsuleModal() {
+      const title = prompt('عنوان الوصية أو التأمل:');
+      if (!title) return;
+      const text = prompt('نص الوصية (سيتم تشفيرها محلياً بـ AES-256):');
+      if (!text) return;
+
+      appState.capsules.unshift({
+        id: 'cap_' + Date.now(),
+        type: 'advice',
+        typeLabel: 'نصيحة وخبرة',
+        title: title,
+        plainText: text,
+        date: '2026/10/04'
+      });
+      renderCapsules();
+    }
+
+    function updateTargetSetting(val) {
+      appState.user.dailyTargetMinutes = parseInt(val);
+      document.getElementById('target-slider-val').innerText = `${val} دقيقة`;
+      render();
+    }
+
+    function toggleDarkMode(isDark) {
+      appState.user.darkMode = isDark;
+      const phone = document.getElementById('phone-container');
+      if (isDark) {
+        phone.classList.remove('bg-[#F9F7F2]', 'text-[#212824]');
+        phone.classList.add('bg-[#131815]', 'text-[#EDEDEA]');
+        document.querySelectorAll('.card').forEach(c => {
+          c.classList.remove('bg-white', 'border-stone-200');
+          c.classList.add('bg-[#1C2420]', 'border-stone-800');
+        });
+        document.querySelectorAll('.card-title').forEach(t => {
+          t.classList.remove('text-stone-900', 'text-stone-800');
+          t.classList.add('text-stone-100');
+        });
+        document.querySelectorAll('.modal-card').forEach(m => {
+          m.classList.remove('bg-white');
+          m.classList.add('bg-[#1C2420]', 'text-stone-100');
+        });
+        document.querySelectorAll('.input-field').forEach(i => {
+          i.classList.remove('border-stone-300');
+          i.classList.add('bg-[#232D28]', 'border-stone-700', 'text-stone-100');
+        });
+        document.querySelector('.header-bar').classList.add('border-stone-800');
+        document.querySelector('.nav-bar').classList.remove('bg-white', 'border-stone-200/80');
+        document.querySelector('.nav-bar').classList.add('bg-[#1C2420]', 'border-stone-800');
+      } else {
+        phone.classList.add('bg-[#F9F7F2]', 'text-[#212824]');
+        phone.classList.remove('bg-[#131815]', 'text-[#EDEDEA]');
+        document.querySelectorAll('.card').forEach(c => {
+          c.classList.add('bg-white', 'border-stone-200');
+          c.classList.remove('bg-[#1C2420]', 'border-stone-800');
+        });
+        document.querySelectorAll('.card-title').forEach(t => {
+          t.classList.add('text-stone-900');
+          t.classList.remove('text-stone-100');
+        });
+        document.querySelectorAll('.modal-card').forEach(m => {
+          m.classList.add('bg-white');
+          m.classList.remove('bg-[#1C2420]', 'text-stone-100');
+        });
+        document.querySelectorAll('.input-field').forEach(i => {
+          i.classList.add('border-stone-300');
+          i.classList.remove('bg-[#232D28]', 'border-stone-700', 'text-stone-100');
+        });
+        document.querySelector('.header-bar').classList.remove('border-stone-800');
+        document.querySelector('.nav-bar').classList.add('bg-white', 'border-stone-200/80');
+        document.querySelector('.nav-bar').classList.remove('bg-[#1C2420]', 'border-stone-800');
+      }
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>

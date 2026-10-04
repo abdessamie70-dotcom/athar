@@ -1,0 +1,50 @@
+[
+  {
+    "initiativeId": "init_01",
+    "category": "knowledge",
+    "title": "توثيق حل تقني مفتوح المصدر",
+    "description": "كتابة شرح مبسط أو مقال تقني يحل مشكلة واجهتك أثناء العمل ونشره مجاناً لينتفع به غيرك.",
+    "estimatedCost": "zero_cost",
+    "tags": ["تقنية", "علم_نافع", "برمجة"]
+  },
+  {
+    "initiativeId": "init_02",
+    "category": "sadaqah",
+    "title": "سقيا ماء أو صيانة مبرد مسجد",
+    "description": "توفير عبوات ماء نظيفة أو فحص وصيانة دورية لبراد مياه في مكان عام أو مسجد بالحي.",
+    "estimatedCost": "low_cost",
+    "tags": ["خدمة_مجتمعية", "صدقة_جارية", "ميداني"]
+  },
+  {
+    "initiativeId": "init_03",
+    "category": "service",
+    "title": "وقف كتاب أو مصحف للمطالعة العامة",
+    "description": "إهداء نسخة مصحف برسم واضح أو كتاب علمي نافع لمكتبة عامة أو زاوية قراءة.",
+    "estimatedCost": "low_cost",
+    "tags": ["تعليم", "وقف", "كتب"]
+  },
+  {
+    "initiativeId": "init_04",
+    "category": "knowledge",
+    "title": "تعليم قراءة سورة الفاتحة",
+    "description": "تعليم شخص قراءة سورة الفاتحة بشكل سليم ومتقن، ليظل أجر صلاته جارياً لك طيلة عمره.",
+    "estimatedCost": "zero_cost",
+    "tags": ["قرآن", "تعليم", "علم_نافع"]
+  },
+  {
+    "initiativeId": "init_05",
+    "category": "sadaqah",
+    "title": "غرس شتلة أو شجرة مثمرة",
+    "description": "غرس نبتة أو شجرة يستظل بها عابر سبيل أو يأكل منها طير أو بهيمة، فتكون صدقة جارية.",
+    "estimatedCost": "low_cost",
+    "tags": ["بيئة", "صدقة_جارية", "خير"]
+  },
+  {
+    "initiativeId": "init_06",
+    "category": "service",
+    "title": "إماطة الأذى وتيسير ممر عام",
+    "description": "إزالة ضرر أو تنظيف زاوية طريق أو إصلاح إنارة لتسهيل مرور الناس وأمانهم في الحي.",
+    "estimatedCost": "zero_cost",
+    "tags": ["خدمة_مجتمعية", "إماطة_الأذى", "أثر_صالح"]
+  }
+]
