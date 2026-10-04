@@ -1,4 +1,4 @@
-name: Build Athar Android APK & Deploy Web
+name: Build Athar Release APK
 
 on:
   push:
@@ -11,8 +11,8 @@ permissions:
   contents: write
 
 jobs:
-  build-apk:
-    name: Build Android APK (Debug & Release)
+  build-release-apk:
+    name: Build app-release.apk
     runs-on: ubuntu-latest
 
     steps:
@@ -41,49 +41,29 @@ jobs:
       - name: Run Unit Tests
         run: dart run test/run_parser_tests.dart
 
-      - name: Build Debug APK
-        run: flutter build apk --debug
-
       - name: Build Release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-tree-shake-icons --verbose
 
-      - name: Upload Android APK Artifacts
+      - name: Upload app-release.apk Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: athar-apk-builds
-          path: build/app/outputs/flutter-apk/*.apk
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
           retention-days: 30
 
-  build-web:
-    name: Build Flutter Web (HTML)
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          cache: true
-
-      - name: Install Dependencies
-        run: flutter pub get
-
-      - name: Build Flutter Web
-        run: flutter build web --release --base-href /athar.app/
-
-      - name: Upload Web Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: athar-web-html
-          path: build/web/
-          retention-days: 30
-
-      - name: Deploy to GitHub Pages (HTML Live Web App)
+      - name: Publish GitHub Release with app-release.apk
         if: github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: softprops/action-gh-release@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
+          tag_name: v1.0.${{ github.run_number }}
+          name: "أثر باقٍ - إصدار رقم 1.0.${{ github.run_number }}"
+          body: |
+            ## تحميل تطبيق «أثر باقٍ» مباشرة (app-release.apk)
+            - **الإصدار:** 1.0.${{ github.run_number }}
+            - **معرف التطبيق:** com.abdessamie70.athar
+            - **الهدف الأدنى:** Android 5.0 (API 21)+
+            - **الملف المرفق:** `app-release.apk` (جاهز للتثبيت المباشر على الهاتف)
+          files: build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
