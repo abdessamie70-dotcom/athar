@@ -42,7 +42,24 @@ jobs:
         run: dart run test/run_parser_tests.dart
 
       - name: Build Release APK
-        run: flutter build apk --release --no-tree-shake-icons --verbose
+        run: |
+          flutter build apk --release --no-tree-shake-icons --verbose 2>&1 | tee build_output.log
+
+      - name: Report Build Log on Failure
+        if: failure()
+        run: |
+          echo "## ❌ Build Failure Log Summary" >> $GITHUB_STEP_SUMMARY
+          echo '```text' >> $GITHUB_STEP_SUMMARY
+          grep -i -E "error|exception|failed|failure" build_output.log | tail -n 50 >> $GITHUB_STEP_SUMMARY || tail -n 50 build_output.log >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Full Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-build-log
+          path: build_output.log
+          retention-days: 7
 
       - name: Upload app-release.apk Artifact
         uses: actions/upload-artifact@v4
