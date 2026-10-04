@@ -21,6 +21,14 @@ def check_actions():
             print(f"Found {len(runs)} workflow run(s):")
             for r in runs[:5]:
                 print(f"- Run #{r.get('run_number')}: {r.get('name')} | Status: {r.get('status')} | Conclusion: {r.get('conclusion')}")
+            if runs:
+                latest = runs[0]
+                jobs_data = json.loads(urllib.request.urlopen(urllib.request.Request(latest['jobs_url'], headers={"User-Agent": "AtharApp/1.0"})).read().decode())
+                for job in jobs_data.get('jobs', []):
+                    print(f"\n  Job: {job['name']} ({job['status']})")
+                    for step in job.get('steps', []):
+                        icon = "[OK]" if step.get('conclusion') == 'success' else ("[..]" if step.get('status') == 'in_progress' else ("[X]" if step.get('conclusion') == 'failure' else " - "))
+                        print(f"    {icon} {step['name']}: {step['status']} ({step.get('conclusion')})")
     except urllib.error.HTTPError as e:
         print(f"HTTP Error {e.code}: {e.reason}")
         if e.code == 404:

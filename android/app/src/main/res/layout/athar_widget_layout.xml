@@ -82,7 +82,6 @@
                 android:layout_height="26dp"
                 android:layout_gravity="center"
                 android:src="@android:drawable/ic_btn_speak_now"
-                android:tint="#FFFFFF"
                 android:contentDescription="تسجيل صوتي فوري" />
         </FrameLayout>
     </LinearLayout>

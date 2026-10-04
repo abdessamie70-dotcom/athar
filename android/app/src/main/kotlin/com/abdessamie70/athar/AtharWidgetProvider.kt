@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
+import com.abdessamie70.athar.R
 
 class AtharWidgetProvider : AppWidgetProvider() {
 
