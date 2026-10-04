@@ -7,7 +7,7 @@ import 'package:home_widget/home_widget.dart';
 class HomeWidgetService {
   static const String androidWidgetProvider = 'AtharWidgetProvider';
   static const String iOSWidgetKind = 'AtharWidget';
-  static const String appGroupId = 'group.com.athar.app';
+  static const String appGroupId = 'group.com.abdessamie70.athar';
 
   static const String keyLastingMinutes = 'lasting_minutes';
   static const String keyLastingMinutesNum = 'lasting_minutes_num';

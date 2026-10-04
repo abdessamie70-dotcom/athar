@@ -5,8 +5,8 @@ plugins {
 }
 
 android {
-    namespace = "com.athar.app.athar"
-    compileSdk = 35
+    namespace = "com.abdessamie70.athar"
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -15,16 +15,16 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.athar.app.athar"
+        applicationId = "com.abdessamie70.athar"
         minSdk = 21
-        targetSdk = 35
+        targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("debug") ?: signingConfigs.getByName("debug")
         }
     }
 }

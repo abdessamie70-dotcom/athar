@@ -1,4 +1,4 @@
-package com.athar.app.athar
+package com.abdessamie70.athar
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager

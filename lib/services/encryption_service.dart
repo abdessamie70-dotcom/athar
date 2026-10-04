@@ -52,7 +52,7 @@ class EncryptionService {
       final encrypter = enc.Encrypter(enc.AES(key, mode: enc.AESMode.cbc));
       return encrypter.decrypt(encrypted, iv: iv);
     } catch (e) {
-      throw EncryptionException('Decryption failed. Please check your passphrase.');
+      throw const EncryptionException('Decryption failed. Please check your passphrase.');
     }
   }
 

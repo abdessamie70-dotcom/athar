@@ -1,4 +1,4 @@
-name: Build Athar Android APK
+name: Build Athar Android APK & Deploy Web
 
 on:
   push:
@@ -7,9 +7,12 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-apk:
-    name: Build Release APK
+    name: Build Android APK (Debug & Release)
     runs-on: ubuntu-latest
 
     steps:
@@ -28,18 +31,59 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Accept Android Licenses
+        run: |
+          yes | flutter doctor --android-licenses || true
+
       - name: Install Dependencies
         run: flutter pub get
 
       - name: Run Unit Tests
         run: dart run test/run_parser_tests.dart
 
-      - name: Build Release APK
-        run: flutter build apk --release --verbose
+      - name: Build Debug APK
+        run: flutter build apk --debug
 
-      - name: Upload Athar APK Artifact
+      - name: Build Release APK
+        run: flutter build apk --release
+
+      - name: Upload Android APK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: athar-release-apk
+          name: athar-apk-builds
           path: build/app/outputs/flutter-apk/*.apk
           retention-days: 30
+
+  build-web:
+    name: Build Flutter Web (HTML)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        run: flutter build web --release --base-href /athar.app/
+
+      - name: Upload Web Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: athar-web-html
+          path: build/web/
+          retention-days: 30
+
+      - name: Deploy to GitHub Pages (HTML Live Web App)
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
